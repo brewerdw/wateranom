@@ -1,12 +1,16 @@
 Package: wateranom
-Title: What the Package Does (One Line, Title Case)
+Title: Plot Water Surplus And Deficit For Country Populations
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Derrick", "Brewer", , "brewer@isciences.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: Given a .csv file of global water surplus and deficit return periods,
+    the package will create surplus and deficit dataframes that have been manimpulated
+    to show the water anomaly return period as a categorical variable.  The package
+    creates both water surplus and deficit plots for a specified amount of countries.
+    Each plot shows the percentage of the country population exposed water anomalies,
+    with different levels of deficits and surpluses.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
