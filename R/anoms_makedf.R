@@ -1,7 +1,20 @@
-anoms_makedfs <- function(file_path, pix_size=10, n_coun=10){
+#' Make deficit and surplus data frames
+#'
+#' @param file_path A file path that points to a .csv file
+#' @param pix_size Minimum number of country pixels
+#' @param n_coun  Number of countries that will display on a plot
+#'
+#' @return A water deficit data frame and water surplus data frame
+#' @export
+#'
+#' @examples
+#' file_path <- "~/population_water_anomaly_summary_201801.csv"
+#' pix_size <- 10
+#' n_coun <- 10
+anoms_makedf <- function(file_path, pix_size, n_coun){
 
   # read water anomaly .csv as a data frame; ex:population_water_anomaly_summary_200204.csv
-  df1 <- read.csv(file_path)
+  df1 <- readr::read_csv(file_path)
   # remove the world row (last row) from the data frame
   df2 <- head(df1, -1)
 
@@ -20,9 +33,9 @@ anoms_makedfs <- function(file_path, pix_size=10, n_coun=10){
   df2$country_pixels <- c.pix
 
   # create a deficit data frame to capture countries with lots of water deficit
-  dfd <- filter(df2, pop_frac_deficit_gt_40 >= 0.02)
+  dfd <- dplyr::filter(df2, pop_frac_deficit_gt_40 >= 0.02)
   # remove countries with less than pix_size pixels
-  dfd <- filter(dfd, country_pixels >= pix_size)
+  dfd <- dplyr::filter(dfd, country_pixels >= pix_size)
   # skinny down the data frame to the n_coun countries with the greatest pop_frac_deficit_gt_40
   dfd <- dfd[order(dfd$pop_frac_deficit_gt_40, decreasing = TRUE), ]
   dfd <- head(dfd,n_coun)
@@ -47,9 +60,9 @@ anoms_makedfs <- function(file_path, pix_size=10, n_coun=10){
   dfdl$country <- factor(dfdl$country, levels = unique(dfdl$country[order(dfdl$rp, decreasing = TRUE)]))
 
   # create a surplus data frame to capture countries with lots of water surplus
-  dfs <- filter(df2, pop_frac_surplus_gt_40 >= 0.02)
+  dfs <- dplyr::filter(df2, pop_frac_surplus_gt_40 >= 0.01)
   # remove countries with less than pix_size pixels
-  dfs <- filter(dfs, country_pixels >= pix_size)
+  dfs <- dplyr::filter(dfs, country_pixels >= pix_size)
   # skinny down the data frame to the n_coun countries with the greatest pop_frac_surplus_gt_40
   dfs <- dfs[order(dfs$pop_frac_surplus_gt_40, decreasing = TRUE), ]
   dfs <- head(dfs,n_coun)
@@ -72,5 +85,9 @@ anoms_makedfs <- function(file_path, pix_size=10, n_coun=10){
   )
   # order countries by rp, descending
   dfsl$country <- factor(dfsl$country, levels = unique(dfsl$country[order(dfsl$rp, decreasing = TRUE)]))
+
+  df_list <- list(dfdl, dfsl)
+
+  return(df_list)
 
 }

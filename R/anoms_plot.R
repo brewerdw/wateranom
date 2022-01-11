@@ -1,10 +1,29 @@
-anoms_plot <- function(){
+#' Make deficit and surplus plots
+#'
+#' @param file_path A file path that points to a .csv file
+#' @param pix_size Minimum number of country pixels
+#' @param n_coun  Number of countries that will display on a plot
+#'
+#' @return A water deficit plot and a surplus plot
+#' @export
+#'
+#' @examples
+#' #' file_path <- "~/population_water_anomaly_summary_201801.csv"
+#' pix_size <- 10
+#' n_coun <- 10
+library(ggplot2)
+anoms_plot <- function(file_path, pix_size=10, n_coun=10){
 
-  plot_title <- substr(file_path_sans_ext(basename(file_path)), 34, 39)
+  df_list <- wateranom::anoms_makedf(file_path, pix_size, n_coun) # create data frames
 
-  d_plot <- ggplot(data = dfdl, aes(x=country, y=pop_frac, fill = rp)) +
+  dfdl <- df_list[[1]] # deficit data frame
+  dfsl <- df_list[[2]] # surplus data frame
 
-    geom_bar(stat="identity")+
+  plot_title <- substr(basename(file_path), 34, 39) # YYYYMM from csv file name
+
+  d_plot <- ggplot2::ggplot(data = dfdl, ggplot2::aes(x=country, y=pop_frac, fill = rp)) +
+
+    ggplot2::geom_bar(stat="identity")+
 
     scale_y_continuous(breaks = seq(0,1,0.25), labels = c(0,'25%','50%','75%','100%')) +
 
@@ -43,11 +62,11 @@ anoms_plot <- function(){
                                  "20-40",
                                  "> 40"),
                       values = c("#FFFFFF",
-                                 "#FDF0B1",
-                                 "#F7C029",
-                                 "#FA9A3A",
-                                 "#CC3300",
-                                 "#921C40"),
+                                 "#FFEDA3",
+                                 "#FFC754",
+                                 "#FF8D43",
+                                 "#D44135",
+                                 "#9B0039"),
                       labels = c("   normal",
                                  " 3 abnormal",
                                  " 5 moderate",
@@ -56,9 +75,9 @@ anoms_plot <- function(){
                                  "40 exceptional")
     )
 
-  s_plot <- ggplot(data = dfsl, aes(x=country, y=pop_frac, fill = rp)) +
+  s_plot <- ggplot2::ggplot(data = dfsl, ggplot2::aes(x=country, y=pop_frac, fill = rp)) +
 
-    geom_bar(stat="identity")+
+    ggplot2::geom_bar(stat="identity")+
 
     scale_y_continuous(breaks = seq(0,1,0.25), labels = c(0,'25%','50%','75%','100%')) +
 
@@ -97,11 +116,11 @@ anoms_plot <- function(){
                                  "20-40",
                                  "> 40"),
                       values = c("#FFFFFF",
-                                 "#CCFF99",
-                                 "#00CC99",
-                                 "#66CCCC",
-                                 "#3399CC",
-                                 "#000099"),
+                                 "#CEFFAD",
+                                 "#00F3B5",
+                                 "#00CFCE",
+                                 "#009ADE",
+                                 "#0045B5"),
                       labels = c("   normal",
                                  " 3 abnormal",
                                  " 5 moderate",
@@ -110,5 +129,5 @@ anoms_plot <- function(){
                                  "40 exceptional")
     )
 
-  grid.arrange(d_plot, s_plot, ncol = 2)
+  gridExtra::grid.arrange(d_plot, s_plot, ncol = 2)
 }
