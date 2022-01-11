@@ -4,11 +4,23 @@
 \alias{anoms_plot}
 \title{Make deficit and surplus plots}
 \usage{
-anoms_plot()
+anoms_plot(file_path, pix_size = 10, n_coun = 10)
+}
+\arguments{
+\item{file_path}{A file path that points to a .csv file}
+
+\item{pix_size}{Minimum number of country pixels}
+
+\item{n_coun}{Number of countries that will display on a plot}
 }
 \value{
-A water deficit plot and a surplus plot
+A water deficit plot and a water surplus plot
 }
 \description{
 Make deficit and surplus plots
+}
+\examples{
+#' file_path <- "~/population_water_anomaly_summary_201801.csv"
+pix_size <- 10
+n_coun <- 10
 }

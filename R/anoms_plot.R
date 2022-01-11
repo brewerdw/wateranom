@@ -4,14 +4,13 @@
 #' @param pix_size Minimum number of country pixels
 #' @param n_coun  Number of countries that will display on a plot
 #'
-#' @return A water deficit plot and a surplus plot
+#' @return A water deficit plot and a water surplus plot
 #' @export
 #'
 #' @examples
 #' #' file_path <- "~/population_water_anomaly_summary_201801.csv"
 #' pix_size <- 10
 #' n_coun <- 10
-library(ggplot2)
 anoms_plot <- function(file_path, pix_size=10, n_coun=10){
 
   df_list <- wateranom::anoms_makedf(file_path, pix_size, n_coun) # create data frames
@@ -25,9 +24,9 @@ anoms_plot <- function(file_path, pix_size=10, n_coun=10){
 
     ggplot2::geom_bar(stat="identity")+
 
-    scale_y_continuous(breaks = seq(0,1,0.25), labels = c(0,'25%','50%','75%','100%')) +
+    ggplot2::scale_y_continuous(breaks = seq(0,1,0.25), labels = c(0,'25%','50%','75%','100%')) +
 
-    theme(axis.text.x = element_text(angle = 90, hjust=0.2, vjust=0.2, size = 10),
+    ggplot2::theme(axis.text.x = element_text(angle = 90, hjust=0.2, vjust=0.2, size = 10),
           panel.background = element_rect(fill = "#EFEFEF", colour = "black", size = .1, linetype = "solid"),
           panel.grid.major = element_line(size = 0, linetype = 'solid', color = NA),
           panel.grid.minor = element_line(size = 0, linetype = 'solid', color = NA),
@@ -38,23 +37,23 @@ anoms_plot <- function(file_path, pix_size=10, n_coun=10){
           legend.key = element_rect(color = "#000000", fill = NA)
     ) +
 
-    labs(title="\nPopulations Exposed to Water Deficit",
+    ggplot2::labs(title="\nPopulations Exposed to Water Deficit",
          subtitle=paste0("Countries with significant exceptional return periods in ", plot_title),
          y = "Percent of Country Population",
          x= ""
     ) +
 
-    guides(color = guide_legend(title.position = "top",
+    ggplot2::guides(color = guide_legend(title.position = "top",
                                 title.hjust = 0.25,
                                 label.position = "",
                                 nrow = 12),
-           fill = guide_legend(title.position = "top",
+                    fill = guide_legend(title.position = "top",
                                title.hjust = 0,
                                label.position = "right",
                                nrow = 12)
     ) +
 
-    scale_fill_manual(name = "Return Period (years)\n",
+    ggplot2::scale_fill_manual(name = "Return Period (years)\n",
                       breaks = c("< 3",
                                  "3-5",
                                  "5-10",
@@ -79,9 +78,9 @@ anoms_plot <- function(file_path, pix_size=10, n_coun=10){
 
     ggplot2::geom_bar(stat="identity")+
 
-    scale_y_continuous(breaks = seq(0,1,0.25), labels = c(0,'25%','50%','75%','100%')) +
+    ggplot2::scale_y_continuous(breaks = seq(0,1,0.25), labels = c(0,'25%','50%','75%','100%')) +
 
-    theme(axis.text.x = element_text(angle = 90, hjust=0.2, vjust=0.2, size = 10),
+    ggplot2::theme(axis.text.x = element_text(angle = 90, hjust=0.2, vjust=0.2, size = 10),
           panel.background = element_rect(fill = "#EFEFEF", colour = "black", size = .1, linetype = "solid"),
           panel.grid.major = element_line(size = 0, linetype = 'solid', color = NA),
           panel.grid.minor = element_line(size = 0, linetype = 'solid', color = NA),
@@ -92,23 +91,23 @@ anoms_plot <- function(file_path, pix_size=10, n_coun=10){
           legend.key = element_rect(color = "#000000", fill = NA)
     ) +
 
-    labs(title="\nPopulations Exposed to Water Surplus",
+    ggplot2::labs(title="\nPopulations Exposed to Water Surplus",
          subtitle=paste0("Countries with significant exceptional return periods in ", plot_title),
          y = "Percent of Country Population",
          x= ""
     ) +
 
-    guides(color = guide_legend(title.position = "top",
+    ggplot2::guides(color = guide_legend(title.position = "top",
                                 title.hjust = 0.25,
                                 label.position = "",
                                 nrow = 12),
-           fill = guide_legend(title.position = "top",
+                    fill = guide_legend(title.position = "top",
                                title.hjust = 0,
                                label.position = "right",
                                nrow = 12)
     ) +
 
-    scale_fill_manual(name = "Return Period (years)\n",
+    ggplot2::scale_fill_manual(name = "Return Period (years)\n",
                       breaks = c("< 3",
                                  "3-5",
                                  "5-10",

@@ -4,7 +4,7 @@
 \alias{anoms_makedf}
 \title{Make deficit and surplus data frames}
 \usage{
-anoms_makedf(file_path, pix_size = 10, n_coun = 10)
+anoms_makedf(file_path, pix_size, n_coun)
 }
 \arguments{
 \item{file_path}{A file path that points to a .csv file}
