@@ -3,6 +3,8 @@
 #' @param file_path A file path that points to a .csv file
 #' @param pix_size Minimum number of country pixels
 #' @param n_coun  Number of countries that will display on a plot
+#' @param coun_area Country land area in square kilometers
+#' @param min_pop Country population
 #'
 #' @return A water deficit data frame and water surplus data frame
 #' @export
@@ -11,7 +13,7 @@
 #' file_path <- "~/population_water_anomaly_summary_201801.csv"
 #' pix_size <- 10
 #' n_coun <- 10
-anoms_makedf <- function(file_path, pix_size, n_coun){
+anoms_makedf <- function(file_path, pix_size, coun_area, n_coun, min_pop){
 
   # read water anomaly .csv as a data frame; ex:population_water_anomaly_summary_200204.csv
   df1 <- readr::read_csv(file_path)
@@ -25,69 +27,72 @@ anoms_makedf <- function(file_path, pix_size, n_coun){
   # vector of country pixels rounded to the nearest ones
   c.pix <- c(0,251,415,0,1,12,0,25,1113,13,0,24208,4,0,2782,40,37,9,16,38,0,91,49,49,0,5,23,0,112,7,0,368,2837,0,2,14,0,203,203,6772,0,19,317,3808,105,152,760,111,0,371,1,1,17,39,0,0,0,2,39,184,7,0,25,16,851,83,357,41,95,214,28,372,252,6,6,258,1,0,86,135,30,0,78,0,81,1,4,11,9,55,0,2626,37,27,0,68,0,0,38,26,9,44,616,0,1115,0,38,624,172,78,8,133,4,0,34,152,1322,191,86,60,0,0,40,6,79,4,31,589,0,0,22,11,37,1,38,0,0,158,0,16,204,0,695,0,11,426,0,233,6,739,0,268,361,0,0,1,39,107,0,289,7,403,0,300,43,0,20,243,54,0,117,107,327,25,0,427,98,0,152,164,3,52,39,141,2,1,4,1,110,11683,8,682,634,66,0,2,0,100,9,24,7,0,207,0,35,206,0,48,24,9,317,6,0,0,74,0,429,19,173,59,0,204,5,0,2,61,325,0,13,308,79,296,0,68,4468,194,0,0,299,0,0,112,4,0,1,0,161,0,5,1,0,0,153,452,251,134)
 
-  # add country_areas as new column in df1
+  # add country_areas as new column in df2
   df2$country_area <- c.areas
-  # add country_abbrev <- new column in df1
+  # add country_abbrev <- new column in df2
   df2$country_abbrev <- c.abbrev
-  # add country_pixels as new column in df1
+  # add country_pixels as new column in df2
   df2$country_pixels <- c.pix
+  # add country_population as new column in df2; sum of columns 3 through 8
+  df2$country_population <- rowSums(df2[,3:8])
+  # remove countries with less than coun_area sq kilometers and less than min_pop country population
+  df3 <- dplyr::filter(df2, country_area >= coun_area & country_population >= min_pop)
 
-  # create a deficit data frame to capture countries with lots of water deficit
-  dfd <- dplyr::filter(df2, pop_frac_deficit_gt_40 >= 0.02)
-  # remove countries with less than pix_size pixels
-  dfd <- dplyr::filter(dfd, country_pixels >= pix_size)
-  # skinny down the data frame to the n_coun countries with the greatest pop_frac_deficit_gt_40
+  # skinny data frame to focus on countries with exceptional deficit
+  dfd <- dplyr::filter(df3, pop_frac_deficit_gt_40 >= 0.02)
+  # skinny the defict data frame to n_coun countries with the greatest pop_frac_deficit_gt_40
   dfd <- dfd[order(dfd$pop_frac_deficit_gt_40, decreasing = TRUE), ]
   dfd <- utils::head(dfd,n_coun)
   # change the deficit data frame into a long data frame so that the return periods are categories
   dfdl <- data.frame(country = dfd$country_name,
+                     country_area = dfd$country_area,
                      pix_size = dfd$country_pixels,
                      pop_frac = c(dfd$pop_frac_deficit_gt_40,
                                   dfd$pop_frac_deficit_20_40,
                                   dfd$pop_frac_deficit_10_20,
                                   dfd$pop_frac_deficit_5_10,
-                                  dfd$pop_frac_deficit_3_5,
-                                  dfd$pop_frac_deficit_lt_3),
+                                  dfd$pop_frac_deficit_3_5),
+                                  #dfd$pop_frac_deficit_lt_3),
                      rp = factor(c(rep("> 40", nrow(dfd)),
                                    rep("20-40", nrow(dfd)),
                                    rep("10-20", nrow(dfd)),
                                    rep("5-10", nrow(dfd)),
-                                   rep("3-5", nrow(dfd)),
-                                   rep("< 3", nrow(dfd))),
-                                 levels = c("< 3", "3-5", "5-10", "10-20", "20-40", "> 40"))
+                                   rep("3-5", nrow(dfd))),
+                                   #rep("< 3", nrow(dfd))),
+                                 levels = c("3-5", "5-10", "10-20", "20-40", "> 40"))
                     )
-  # order countries by rp, descending
-  dfdl$country <- factor(dfdl$country, levels = unique(dfdl$country[order(dfdl$rp, decreasing = TRUE)]))
+  # make countries a factor so it doesn't plot alphabetically
+  dfdl$country <- factor(dfdl$country, levels = rev(unique(dfdl$country)))
 
-  # create a surplus data frame to capture countries with lots of water surplus
-  dfs <- dplyr::filter(df2, pop_frac_surplus_gt_40 >= 0.01)
-  # remove countries with less than pix_size pixels
-  dfs <- dplyr::filter(dfs, country_pixels >= pix_size)
-  # skinny down the data frame to the n_coun countries with the greatest pop_frac_surplus_gt_40
+
+  # skinny data frame to focus on countries with exceptional surplus
+  dfs <- dplyr::filter(df3, pop_frac_surplus_gt_40 >= 0.01)
+  # skinny the surplus data frame to n_coun countries with the greatest pop_frac_surplus_gt_40
   dfs <- dfs[order(dfs$pop_frac_surplus_gt_40, decreasing = TRUE), ]
   dfs <- utils::head(dfs,n_coun)
   # change the surplus data frame into a long data frame so that the return periods are categories
   dfsl <- data.frame(country = dfs$country_name,
+                     country_area = dfs$country_area,
                      pix_size = dfs$country_pixels,
                      pop_frac = c(dfs$pop_frac_surplus_gt_40,
                                   dfs$pop_frac_surplus_20_40,
                                   dfs$pop_frac_surplus_10_20,
                                   dfs$pop_frac_surplus_5_10,
-                                  dfs$pop_frac_surplus_3_5,
-                                  dfs$pop_frac_surplus_lt_3),
+                                  dfs$pop_frac_surplus_3_5),
+                                  #dfs$pop_frac_surplus_lt_3),
                      rp = factor(c(rep("> 40", nrow(dfs)),
                                    rep("20-40", nrow(dfs)),
                                    rep("10-20", nrow(dfs)),
                                    rep("5-10", nrow(dfs)),
-                                   rep("3-5", nrow(dfs)),
-                                   rep("< 3", nrow(dfs))),
-                                 levels = c("< 3", "3-5", "5-10", "10-20", "20-40", "> 40"))
+                                   rep("3-5", nrow(dfs))),
+                                   #rep("< 3", nrow(dfs))),
+                                 levels = c("3-5", "5-10", "10-20", "20-40", "> 40"))
   )
-  # order countries by rp, descending
-  dfsl$country <- factor(dfsl$country, levels = unique(dfsl$country[order(dfsl$rp, decreasing = TRUE)]))
+  # make countries a factor so it doesn't plot alphabetically
+  dfsl$country <- factor(dfsl$country, levels = rev(unique(dfsl$country)))
 
-  df_list <- list(dfdl, dfsl)
+df_list <- list(dfdl, dfsl)
 
-  return(df_list)
+return(df_list)
 
 }

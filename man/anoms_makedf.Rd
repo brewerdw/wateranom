@@ -4,14 +4,18 @@
 \alias{anoms_makedf}
 \title{Make deficit and surplus data frames}
 \usage{
-anoms_makedf(file_path, pix_size, n_coun)
+anoms_makedf(file_path, pix_size, coun_area, n_coun, min_pop)
 }
 \arguments{
 \item{file_path}{A file path that points to a .csv file}
 
 \item{pix_size}{Minimum number of country pixels}
 
+\item{coun_area}{Country land area in square kilometers}
+
 \item{n_coun}{Number of countries that will display on a plot}
+
+\item{min_pop}{Country population}
 }
 \value{
 A water deficit data frame and water surplus data frame

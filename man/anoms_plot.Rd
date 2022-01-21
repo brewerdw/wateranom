@@ -2,22 +2,32 @@
 % Please edit documentation in R/anoms_plot.R
 \name{anoms_plot}
 \alias{anoms_plot}
-\title{Make deficit and surplus plots}
+\title{Make water deficit and surplus plots}
 \usage{
-anoms_plot(file_path, pix_size = 10, n_coun = 10)
+anoms_plot(
+  file_path,
+  pix_size = 10,
+  coun_area = 50000,
+  n_coun = 10,
+  min_pop = 5e+05
+)
 }
 \arguments{
 \item{file_path}{A file path that points to a .csv file}
 
 \item{pix_size}{Minimum number of country pixels}
 
+\item{coun_area}{Country land area in square kilometers}
+
 \item{n_coun}{Number of countries that will display on a plot}
+
+\item{min_pop}{Country population}
 }
 \value{
 A water deficit plot and a water surplus plot
 }
 \description{
-Make deficit and surplus plots
+Make water deficit and surplus plots
 }
 \examples{
 #' file_path <- "~/population_water_anomaly_summary_201801.csv"
