@@ -23,3 +23,5 @@ Imports:
     scales,
     stringr,
     utils
+URL: https://github.com/brewerdw/wateranom
+BugReports: https://github.com/brewerdw/wateranom/issues
