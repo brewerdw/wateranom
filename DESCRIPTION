@@ -4,10 +4,11 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Derrick", "Brewer", , "brewer@isciences.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Given a .csv file of global water surplus and deficit return periods,
-    the package will create surplus and deficit dataframes that have been manimpulated
-    to show the water anomaly return period as a categorical variable.  Using the data
-    frames, the package creates both water surplus and deficit plots for a specified
+Description: Given a .csv file containing a population water anomaly summary 
+    showing country water surplus and deficit return periods, the package will 
+    create dataframes that have been manimpulated to show the water anomaly 
+    return period as a categorical variable.  Using the data frames, the 
+    package creates both water surplus and deficit plots for a specified
     amount of countries.  Each plot shows the percentage of the country population
     exposed to water anomalies, with different levels of deficits and surpluses.
 License: MIT + file LICENSE
